@@ -1,6 +1,6 @@
 from dataclasses import field, fields
 from rest_framework import serializers
-from EmployeeApp.models import Departments,Employees
+from EmployeeApp.models import Departments,Employees,Designations
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,4 +10,9 @@ class DepartmentSerializer(serializers.ModelSerializer):
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model=Employees
-        fields=('EmployeeId','EmployeeName','Department','DateOfJoining','PhotoFileName')
+        fields=('EmployeeId','EmployeeName','Department','DateOfJoining','PhotoFileName','Designation')
+
+class DesignationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Designations
+        fields=('DesignationId','DesignationTitle')

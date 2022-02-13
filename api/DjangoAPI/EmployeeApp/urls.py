@@ -11,5 +11,8 @@ urlpatterns = [
     re_path(r'^employee$',views.employeeApi),
     re_path(r'^employee/([0-9]+)$',views.employeeApi),
 
+    re_path(r'^designation$',views.designationApi),
+    re_path(r'^designation/([0-9]+)$',views.designationApi),
+
     re_path(r'^employee/savefile',views.SaveFile)
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

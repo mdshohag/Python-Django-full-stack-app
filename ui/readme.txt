@@ -1,3 +1,59 @@
+1. Create ui folder
+2. Now create index.html file and write the html code with your view page and js cdn link..
+    Then create the js file your view page and other jf file variables.js, app.js
+
+     <script src="variables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/3.5.3/vue-router.js"></script>
+    <script src="home.js"></script>
+    <script src="department.js"></script>
+     <script src="designation.js"></script>
+    <script src="app.js"></script>
+
+3. index.html file write the code in view the layout
+
+<nav class="navbar navbar-expand-sm bg-light navbar-dark">
+                <ul class="navbar-nav">
+                    <li class="nav-item m-1">
+                        <router-link class="btn btn-light btn-outline-primary" to="/home">Home</router-link>
+                    </li>
+                    <li class="nav-item m-1">
+                        <router-link class="btn btn-light btn-outline-primary" to="/department">Department</router-link>
+                    </li>
+                    <li class="nav-item m-1">
+                        <router-link class="btn btn-light btn-outline-primary" to="/designation">Designation</router-link>
+                    </li>
+                </ul>
+            </nav>
+            <!-- view layout
+            <router-view></router-view>
+
+4. flow the code write in app.js
+
+    const routes=[
+    {path:'/home',component:home},
+    {path:'/employee',component:employee},
+    {path:'/department',component:department},
+    {path:'/designation',component:designation}
+    ]
+
+    const router=new VueRouter({
+        routes
+    })
+
+    const app = new Vue({
+        router
+    }).$mount('#app')
+
+5. flow the code write in variables.js
+
+const variables={
+    API_URL:"http:127.0.0.1:8000/"
+}
+
+6. department.js
+
 const department={template:`
 <div>
 <button type="button" class="btn btn-primary m-2 fload-end" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="addClick()">
@@ -24,7 +80,7 @@ Add Department
               <input class="form-control m-2" v-model="DepartmenNameFilter" v-on:keyup="FilterFn()" placeholder="Filter">
 
             </div>
-                Department Name
+                DepartmentName
              </th>
              <th>
                 Options
@@ -152,19 +208,6 @@ methods:{
             this.refreshData();
             alert(response.data);
         });
-    },
-    FilterFn(){
-        var DepartmenIdFilter=this.DepartmenIdFilter;
-        var DepartmenNameFilter=this.DepartmenNameFilter;
-
-        this.departments=this.departmentsWithoutFilter.filter( function(el){
-                return el.DepartmenId.toString().toLowerCase().includes(
-                    DepartmenIdFilter.toString().trim().toLowerCase()
-                )&&
-                el.DepartmenName.toString().toLowerCase().includes(
-                    DepartmenNameFilter.toString().trim().toLowerCase()
-                )
-            });
     }
 },
 mounted:function(){
@@ -172,3 +215,4 @@ mounted:function(){
 }
 
 }
+

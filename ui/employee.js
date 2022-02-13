@@ -9,15 +9,43 @@ Add Employee
     <thead>
         <tr>
             <th>
+              <div class="d-flex flex-row">
+
+                    <input class="form-control m-2" v-model="EmployeeIdFilter" v-on:keyup="FilterFn()" placeholder="Filter">
+
+                </div>
                 EmployeeId
             </th>
             <th>
+            <div class="d-flex flex-row">
+
+                <input class="form-control m-2" v-model="EmployeeNameFilter" v-on:keyup="FilterFn()" placeholder="Filter">
+
+              </div>
               EmployeeName
              </th>
              <th>
+                <div class="d-flex flex-row">
+
+                  <input class="form-control m-2" v-model="DepartmentFilter" v-on:keyup="FilterFn()" placeholder="Filter">
+
+                </div>
                Department
               </th>
               <th>
+              <div class="d-flex flex-row">
+
+              <input class="form-control m-2" v-model="DesignationFilter" v-on:keyup="FilterFn()" placeholder="Filter">
+
+              </div>
+                 Designation
+              </th>
+              <th>
+              <div class="d-flex flex-row">
+
+                 <input class="form-control m-2" v-model="DateOfJoiningFilter" v-on:keyup="FilterFn()" placeholder="Filter">
+
+              </div>
                 Date Of Joining
               </th>
               <th>
@@ -33,9 +61,10 @@ Add Employee
         <tr v-for="emp in employees">
             <td>{{emp.EmployeeId}}</td>
             <td>{{emp.EmployeeName}}</td>
-            <td>{{emp.Department}}</td>        
+            <td>{{emp.Department}}</td> 
+            <td>{{emp.Designation}}</td>       
             <td>{{emp.DateOfJoining}}</td>        
-            <td><img src="" alt="Photo" class="img-thumbnail"></td>
+            <td><img :src="PhotoPath+emp.PhotoFileName" width="110px" height="110px" alt="Photo" class="img-thumbnail"></td>
             <td>
                 <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
                 @click="editClick(emp)">
@@ -86,6 +115,16 @@ Add Employee
                                 </option>
                             </select>
                         </div>
+                        
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Designation</span>
+                            <select class="form-select" v-model="Designation">
+                                <option v-for="deg in designations">
+                                    {{deg.DesignationTitle}}
+                                </option>
+                            </select>
+                        </div>
+
                         <div class="input-group mb-3">
                             <span class="input-group-text">DOJ</span>
                             <input type="date" class="form-control" v-model="DateOfJoining">
@@ -120,14 +159,22 @@ Add Employee
 data(){
     return{
         departments:[],
+        designations:[],
         employees:[],
         modalTitle:"",
         EmployeeId:0,
         EmployeeName:"",
         Department:"",
+        Designation:"",
         DateOfJoining:"",
         PhotoFileName:"anonymous.png",
-        PhotoPath:variables.PHOTO_URL
+        PhotoPath:variables.PHOTO_URL,
+        EmployeeIdFilter:"",
+        EmployeeNameFilter:"",
+        DepartmentFilter:"",
+        DateOfJoiningFilter:"",
+        DesignationFilter:"",
+        employeesWithoutFilter:[]
     }
 },
 methods:{
@@ -135,10 +182,16 @@ methods:{
         axios.get(variables.API_URL+"employee")
         .then((response)=>{
             this.employees=response.data;
+            this.employeesWithoutFilter=response.data;
         });
         axios.get(variables.API_URL+"department")
         .then((response)=>{
             this.departments=response.data;
+        });
+        
+        axios.get(variables.API_URL+"designation")
+        .then((response)=>{
+            this.designations=response.data;
         });
     },
     addClick(){
@@ -147,7 +200,8 @@ methods:{
         this.EmployeeName="";
         this.Department="";
         this.DateOfJoining="";
-        this.PhotoFileName="anonymous.png"
+        this.PhotoFileName="anonymous.png";
+        this.Designation="";
         
     },
     editClick(emp){
@@ -157,13 +211,15 @@ methods:{
         this.Department=emp.Department;
         this.DateOfJoining=emp.DateOfJoining;
         this.PhotoFileName=emp.PhotoFileName
+        this.Designation=emp.Designation
     },
     createClick(){
         axios.post(variables.API_URL+"employee",{
             EmployeeName:this.EmployeeName,
             Department:this.Department,
             DateOfJoining:this.DateOfJoining,
-            PhotoFileName:this.PhotoFileName
+            PhotoFileName:this.PhotoFileName,
+            Designation:this.Designation
         })
         .then((response)=>{
             this.refreshData();
@@ -176,7 +232,8 @@ methods:{
             EmployeeName:this.EmployeeName,
             Department:this.Department,
             DateOfJoining:this.DateOfJoining,
-            PhotoFileName:this.PhotoFileName
+            PhotoFileName:this.PhotoFileName,
+            Designation:this.Designation
         })
         .then((response)=>{
             this.refreshData();
@@ -202,6 +259,32 @@ methods:{
                 this.PhotoFileName=response.data;
             });
         
+    },
+    FilterFn(){
+        var EmployeeIdFilter=this.EmployeeIdFilter;
+        var EmployeeNameFilter=this.EmployeeNameFilter;
+        var DepartmentFilter=this.DepartmentFilter;
+        var DateOfJoiningFilter=this.DateOfJoiningFilter;
+        var DesignationFilter=this.DesignationFilter;
+        
+
+        this.employees=this.employeesWithoutFilter.filter( function(el){
+                return el.EmployeeId.toString().toLowerCase().includes(
+                    EmployeeIdFilter.toString().trim().toLowerCase()
+                )&&
+                el.EmployeeName.toString().toLowerCase().includes(
+                    EmployeeNameFilter.toString().trim().toLowerCase()
+                )&&
+                el.Department.toString().toLowerCase().includes(
+                    DepartmentFilter.toString().trim().toLowerCase()
+                )&&
+                el.DateOfJoining.toString().toLowerCase().includes(
+                    DateOfJoiningFilter.toString().trim().toLowerCase()
+                )&&
+                el.Designation.toString().toLowerCase().includes(
+                    DesignationFilter.toString().trim().toLowerCase()
+                )
+            });
     }
 },
 mounted:function(){

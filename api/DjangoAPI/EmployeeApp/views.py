@@ -4,8 +4,8 @@ from  django.views.decorators.csrf import csrf_exempt
 from  rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 
-from EmployeeApp.models import Departments,Employees
-from EmployeeApp.serializers import DepartmentSerializer,EmployeeSerializer
+from EmployeeApp.models import Departments,Employees,Designations
+from EmployeeApp.serializers import DepartmentSerializer,EmployeeSerializer,DesignationSerializer
 
 from django.core.files.storage import default_storage
 
@@ -69,3 +69,30 @@ def SaveFile(request):
     file=request.FILES['file']
     file_name=default_storage.save(file.name,file)
     return JsonResponse(file_name,safe=False)
+
+
+@csrf_exempt
+def designationApi(request,id=0):
+    if request.method=='GET':
+        designations = Designations.objects.all()
+        designations_serializer=DesignationSerializer(designations,many=True)
+        return JsonResponse(designations_serializer.data,safe=False)
+    elif request.method=='POST':
+        designation_data=JSONParser().parse(request)
+        designations_serializer=DesignationSerializer(data=designation_data)
+        if designations_serializer.is_valid():
+         designations_serializer.save()
+         return JsonResponse("Added Successfully",safe=False)
+        return JsonResponse("Failed to Add",safe=False)
+    elif request.method=='PUT':
+        designation_data=JSONParser().parse(request)
+        designation=Designations.objects.get(DesignationId=designation_data['DesignationId'])
+        designations_serializer=DesignationSerializer(designation,data=designation_data)
+        if designations_serializer.is_valid():
+            designations_serializer.save()
+            return JsonResponse("Update Successfully",safe=False)
+        return JsonResponse("Failed to Update")
+    elif request.method=='DELETE':
+        designation=Designations.objects.get(DesignationId=id)
+        designation.delete()
+        return JsonResponse("Deleted Successfully",safe=False)
